@@ -1,0 +1,12 @@
+.section {
+    display: grid;
+    grid-template-columns: 15% 35% 35% 15%;
+    height: 450px;
+}
+
+.flex2 {
+    display: flex;
+    justify-content: space-evenly;
+    position: relative;
+    top: 30px;
+}
