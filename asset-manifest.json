@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/temple69.github.io/movie_compare/static/css/main.4854e1cc.css",
+    "main.js": "/temple69.github.io/movie_compare/static/js/main.85ab6d16.js",
+    "static/js/787.14e4bc02.chunk.js": "/temple69.github.io/movie_compare/static/js/787.14e4bc02.chunk.js",
+    "index.html": "/temple69.github.io/movie_compare/index.html",
+    "main.4854e1cc.css.map": "/temple69.github.io/movie_compare/static/css/main.4854e1cc.css.map",
+    "main.85ab6d16.js.map": "/temple69.github.io/movie_compare/static/js/main.85ab6d16.js.map",
+    "787.14e4bc02.chunk.js.map": "/temple69.github.io/movie_compare/static/js/787.14e4bc02.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.4854e1cc.css",
+    "static/js/main.85ab6d16.js"
+  ]
+}
