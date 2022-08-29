@@ -1,8 +1,9 @@
 .flex {
     display: flex;
-    justify-content: space-evenly;
     margin-top: 10px;
     cursor: pointer;
+    gap: 1em;
+    margin-left: 1em;
 }
 
 .img {

@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from 'react'
+import React, { useEffect, useReducer} from 'react'
 import MovieContext from "./movie-context";
 import classes from '../components/Styles/movies.module.css'
 import LeftList from '../components/List/Leftlist';
@@ -112,7 +112,7 @@ const inputs =(state,action)=>{
                 dispatch({type:'leftreset'})
                 return;
             }
-            const movieRequest= fetch(`http://www.omdbapi.com/?s=${state.leftValue}&apikey=e96f3e92&plot=short`)
+            const movieRequest= fetch(`https://www.omdbapi.com/?s=${state.leftValue}&apikey=e96f3e92&plot=short`)
        movieRequest.then((response)=>{
            if (!response.ok) {
                console.log(response)
@@ -145,7 +145,7 @@ const inputs =(state,action)=>{
                 dispatch({type:'rightreset'})
                 return;
             }
-            const movieRequest= fetch(`http://www.omdbapi.com/?s=${state.rightValue}&apikey=e96f3e92&plot=short`)
+            const movieRequest= fetch(`https://www.omdbapi.com/?s=${state.rightValue}&apikey=e96f3e92&plot=short`)
        movieRequest.then((response)=>{
            return response.json()
             })
@@ -221,8 +221,8 @@ if(state.rightshow){
 }
 
     const leftConMovie=<section className={classes.flex2}>
-    <img style={{height:'300px',width:'300px'}} src={state.leftSingleMovie.Poster} alt="" />
-    <div style={{position:'relative'}}>
+    <img  src={state.leftSingleMovie.Poster} alt="" />
+    <div>
     <p><b>Movie-Name</b>:{state.leftSingleMovie.Title}</p>
     <p><b>Plot</b>:{state.leftSingleMovie.Plot}</p>
     <p><b>Genre</b>:{state.leftSingleMovie.Genre}</p>
@@ -233,8 +233,8 @@ if(state.rightshow){
     </div>
     </section>
     const rightConMovie=<section className={classes.flex2}>
-        <img style={{height:'300px',width:'300px'}} src={state.rightSingleMovie.Poster} alt="" />
-    <div style={{position:'relative'}}>
+        <img  src={state.rightSingleMovie.Poster} alt="" />
+    <div>
     <p><b>Movie-Name</b>:{state.rightSingleMovie.Title}</p>
     <p><b>Plot</b>:{state.rightSingleMovie.Plot}</p>
     <p><b>Genre</b>:{state.rightSingleMovie.Genre}</p>

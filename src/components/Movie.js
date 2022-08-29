@@ -25,9 +25,9 @@ function  Movie() {
                 {context.isRight&&context.rightListMovies}
             </RightSearch>
  </section>
- <div>
+ <p className={classes.message}>
  {!context.isLeft&&!context.isRight&&<p><b>MOVIE RECOMMENDED</b>:{context.message}</p>}
- </div>
+ </p>
     </>
   )
 }
