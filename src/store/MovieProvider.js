@@ -1,11 +1,11 @@
 import React, { useEffect, useReducer} from 'react'
 import MovieContext from "./movie-context";
+import { fetchMovieData,fetchSingleMovie } from '../components/api/fetchData';
+import MoviesList from '../components/List/Movies-List';
 import classes from '../components/Styles/movies.module.css'
-import LeftList from '../components/List/Leftlist';
-import Rightlist from '../components/List/Rightlist';
 const initialState={
-    leftValue:undefined,
-    rightValue:undefined,
+    leftValue:'',
+    rightValue:'',
     leftMovies:[],
     leftSingleMovie:[],
     rightMovies:[],
@@ -80,6 +80,7 @@ const inputs =(state,action)=>{
             rightMovies:[],
             rightSingleMovie:[],
             rightshow:false
+            
         }
     }
     else if(action.type=== 'show'){
@@ -96,121 +97,111 @@ const inputs =(state,action)=>{
 }
  function MovieProvider(props) {
     const[state,dispatch]=useReducer(inputs,initialState)
-
-    const leftHandler=(data)=>{
-        dispatch({type:'left',
-        value:data})
+    //This function gets the value of the input and passes it on to to usereducer to manage and update state
+    const inputVALUEHandler=(data,position)=>{
+        if(position === 'left'){
+            dispatch({type:'left',
+            value:data})
+        }
+        else{
+            dispatch({type:'right',
+            value:data})
+        }
     }
-    const rightHandler=(data)=>{
-        dispatch({type:'right',
-        value:data})
-        
+    const getMovies=(data,)=>{
+        console.log(data)
     }
-    useEffect(()=>{
+useEffect(()=>{
         const timeout = setTimeout(()=>{
             if(state.leftValue=== undefined || state.leftValue===''){
                 dispatch({type:'leftreset'})
                 return;
             }
-            const movieRequest= fetch(`https://www.omdbapi.com/?s=${state.leftValue}&apikey=e96f3e92&plot=short`)
-       movieRequest.then((response)=>{
-           if (!response.ok) {
-               console.log(response)
-               }
-           return response.json()
-           })
-       .then(data=>{
-           if(data.Error){
-            dispatch({
-                type:'show'
-            })
-               return []
+            async function getMovies(){
+                const leftdata = await fetchMovieData(state.leftValue,'left')
+                if(leftdata.Error){
+                    dispatch({
+                        type:'show'
+                    })
+                       return []
+                    }
+                    dispatch({
+                        type:'leftlistmovies',
+                        value:leftdata.Search
+                    })
             }
-           
-           dispatch({
-               type:'leftlistmovies',
-               value:data.Search
-           })
-       })
-    
-        },1000)
-        
+        getMovies()
+ },1000)
         return ()=>{
             clearTimeout(timeout)
         }
-       },[state.leftValue])
+       },[state.leftValue,])
        useEffect(()=>{
+        if(state.rightValue=== undefined || state.rightValue===''){
+            dispatch({type:'rightreset'})
+            return;
+        }
         const timeout = setTimeout(()=>{
-            if(state.rightValue=== undefined || state.rightValue===''){
-                dispatch({type:'rightreset'})
-                return;
+           async function getRightMovies(){
+                const rightdata = await fetchMovieData(state.rightValue,)
+                if(rightdata.Error){
+                    dispatch({
+                        type:'rightshow'
+                    })
+                       return []
+                    }
+                    dispatch({
+                        type:'rightlistmovies',
+                        value:rightdata.Search
+                    })
             }
-            const movieRequest= fetch(`https://www.omdbapi.com/?s=${state.rightValue}&apikey=e96f3e92&plot=short`)
-       movieRequest.then((response)=>{
-           return response.json()
-            })
-       .then(data=>{
-           if(data.Error){
-                dispatch({
-                    type:'rightshow'
-                })
-            return []
-           }
-           dispatch({
-               type:'rightlistmovies',
-               value:data.Search
-           })
-       })
-        },1000)
-        return ()=>{
+            getRightMovies()
+    },1000)
+    return ()=>{
             clearTimeout(timeout)
         }
        },[state.rightValue])
+       //This function fetches  single movie and shows information about the movie
+    const singleHandler= async (id,position)=>{
+        if (position === 'left') {
+            const cloneLeftMovies=[...state.leftMovies]
+            const imd = cloneLeftMovies[id]
+            const cloneRightMovies=[...state.rightMovies]
+            const rightimd = cloneRightMovies[id]
     
-       const singleHandler=(id)=>{
-        const cloneLeftMovies=[...state.leftMovies]
-        const imd = cloneLeftMovies[id]
-        dispatch({
-            type:'leftsingle',
-            value:imd.Title
-        })
-        dispatch({type:'lefttrue'})
-        const singleMovieRequest=fetch(`http://www.omdbapi.com/?i=${imd.imdbID}&apikey=e96f3e92&`)
-        singleMovieRequest.then((response)=>{
-            return response.json()
-        })
-        .then(data=>{
+            dispatch({
+                type:'leftsingle',
+                value:imd.Title
+            })
+            dispatch({type:'lefttrue'})
+            const data = await fetchSingleMovie(imd.imdbID,'left')
             dispatch({
                 type:'leftsinglemovies',
                 value:data
             })
-        })
-    }
-    const rightSingleHandler=(id)=>{
-        const cloneLeftMovies=[...state.rightMovies]
-        const imd = cloneLeftMovies[id]
-        dispatch({
-            type:'rightsingle',
-            value:imd.Title
-        })
-        dispatch({type:'righttrue'})
-        const singleMovieRequest=fetch(`http://www.omdbapi.com/?i=${imd.imdbID}&apikey=e96f3e92&`)
-        singleMovieRequest.then((response)=>{
-            return response.json()
-        })
-        .then(data=>{
+        }
+        else{
+            const cloneRightMovies=[...state.rightMovies]
+            const imd = cloneRightMovies[id]
             dispatch({
-                type:'rightsinglemovies',
-                value:data
+                type:'rightsingle',
+                value:imd.Title
             })
-        })
+            dispatch({type:'righttrue'})
+            const data= await fetchSingleMovie(imd.imdbID)
+                dispatch({
+                    type:'rightsinglemovies',
+                    value:data
+                })
+    }
+       
     }
     
-    let LeftListMovies= state.leftMovies.map((movieinfo,index)=>(
-        <LeftList movieTitle={movieinfo.Title} movieSrc={movieinfo.Poster ==="N/A" ? " " : movieinfo.Poster} key={Math.random()} onCLICK={()=>{singleHandler(index)}}></LeftList>
+let LeftListMovies= state.leftMovies.map((movieinfo,index)=>(
+        <MoviesList position='left' movieTitle={movieinfo.Title} movieSrc={movieinfo.Poster ==="N/A" ? " " : movieinfo.Poster} key={Math.random()} onCLICK={()=>{singleHandler(index,'left')}}></MoviesList>
      ))
  let rightListMovies= state.rightMovies.map((movieinfo,index)=>(
-    <Rightlist movieTitle={movieinfo.Title} movieSrc={movieinfo.Poster ==="N/A" ? " " : movieinfo.Poster} key={Math.random()} onCLICK={()=>{rightSingleHandler(index)}}></Rightlist>
+    <MoviesList movieTitle={movieinfo.Title} movieSrc={movieinfo.Poster ==="N/A" ? " " : movieinfo.Poster} key={Math.random()} onCLICK={()=>{singleHandler(index)}}></MoviesList>
  
 ))
 if(state.show){
@@ -219,6 +210,7 @@ if(state.show){
 if(state.rightshow){
     rightListMovies=<p>OOPS!! Movie Name:<i>{state.rightValue}</i> Not Found in Database</p>
 }
+
 
     const leftConMovie=<section className={classes.flex2}>
     <img  src={state.leftSingleMovie.Poster} alt="" />
@@ -252,15 +244,18 @@ let message=''
 else if(parseInt(state.rightSingleMovie.imdbRating)>parseInt(state.leftSingleMovie.imdbRating)){
     message=<p>With a rating of {state.rightSingleMovie.imdbRating} The movie recommended to watch first is <i>{state.rightSingleMovie.Title}</i></p>
 
+}
+else if(parseInt(state.rightSingleMovie.imdbRating) === parseInt(state.leftSingleMovie.imdbRating)){
+    message=<p>Watch trailers of both <i>{state.leftSingleMovie.Title}</i> and <i>{state.rightSingleMovie.Title}</i> and watch the one that interests you </p>
+
 } 
      const moviecontext={
          leftValue:state.leftValue,
          rightValue:state.rightValue,
-         leftHandler,
-         rightHandler,
+         inputVALUEHandler,
          leftMovies:state.leftMovies,
          singleHandler,
-         rightSingleHandler,
+         getMovies,
          leftConMovie,
          rightConMovie,
          isLeft:state.isLeft,

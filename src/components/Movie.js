@@ -1,9 +1,7 @@
 import React, { useContext} from 'react'
 import Header from './Header'
-import LeftSearch from './Input/LeftSearch'
-import LeftContainer from './Container/LeftContainer'
-import RightContainer from './Container/RightContainer'
-import RightSearch from './Input/RightSearch'
+import SearchInput from './Reusable/Input/SearchInput'
+import Container from './Reusable/Container/Container'
 import classes from '../components/Styles/movies.module.css'
 import MovieContext from '../store/movie-context'
 function  Movie() {
@@ -12,22 +10,22 @@ function  Movie() {
     <>
         <Header></Header>
         <section className={classes.section}>
-            <LeftSearch>
+            <SearchInput position = 'left'>
            {context.isLeft&&context.LeftListMovies}
-            </LeftSearch>
-           <LeftContainer>
+            </SearchInput>
+           <Container>
                {context.isLeft?'':context.leftConMovie}
-            </LeftContainer>
-            <RightContainer>
+            </Container>
+            <Container>
                 {context.isRight?'':context.rightConMovie}
-            </RightContainer>
-            <RightSearch>
+            </Container>
+            <SearchInput>
                 {context.isRight&&context.rightListMovies}
-            </RightSearch>
+            </SearchInput>
  </section>
- <p className={classes.message}>
- {!context.isLeft&&!context.isRight&&<p><b>MOVIE RECOMMENDED</b>:{context.message}</p>}
- </p>
+ <div className={classes.message}>
+ {!context.isLeft&&!context.isRight&&<article><b>MOVIE RECOMMENDED</b>:{context.message}</article>}
+ </div>
     </>
   )
 }

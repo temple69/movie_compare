@@ -2,8 +2,8 @@ import React from "react";
 const MovieContext =React.createContext({
     leftValue:undefined,
     rightValue:undefined,
-    leftHandler:()=>{},
-    rightHandler:()=>{},
+    getMovies:()=>{},
+    inputVALUEHandler:()=>{},
     leftMovies:[],
     rightMovies:[],
     singleHandler:()=>{},
